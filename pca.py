@@ -7,14 +7,12 @@ from pylab import *
 
 with open('titanic_processed.csv') as f:
    data_frame = pandas.read_csv(f)
-   print data_frame
-   data_frame = data_frame.drop(data_frame.columns[0], 1)
-   print data_frame
    
    # Replace empty values in the age column with the mean of that column
    for i in range(len(data_frame)):
-       if math.isnan(data_frame .iloc[i,4]):
-           data_frame .iloc[i,4] = data_frame .iloc[:,4].mean()
+       if math.isnan(data_frame.iloc[i,7]):
+           data_frame.iloc[i,7] = data_frame.iloc[:,7].mean()
+
    # Center the values by subtracting the mean and dividing by the standard
    # deviation
    centered = (data_frame
@@ -33,3 +31,35 @@ with open('titanic_processed.csv') as f:
         .assign(queenstown_cent = lambda x: ((x.Queenstown- x.Queenstown.mean()) / x.Queenstown.std()))
         .assign(southhampton_cent = lambda x: ((x.Southhampton- x.Southhampton.mean()) / x.Southhampton.std()))
         )
+
+centeredMatrix = np.mat(centered)
+print np.size(centeredMatrix,1) , 'original size'
+centeredMatrix = np.delete(centeredMatrix, [0,1,2,3,4,5,6,7,8,9,10,11,12,13], 1)   # removing non-centered attribiutes  
+print np.size(centeredMatrix,1) , 'new size after removing non-centered'     
+# checking the outliers for fare price
+#print centered.iloc[:,7].describe()
+#plt.plot(centered.iloc[:,7],'.')  
+
+#checking outliers for age
+#print centered.iloc[:,4].describe()
+#plt.plot(centered.iloc[:,4],'.')
+ 
+# PCA by computing SVD of Y
+U,S,V = linalg.svd(centeredMatrix,full_matrices=False)
+V = np.mat(V).T
+
+# Project the centered data onto principal component space
+K = centeredMatrix * V
+#print K
+
+# Plot PCA of the data
+
+plt.title('PCA')
+plt.plot(K[0,:], K[1,:], '-o', color='red')    #first component
+plt.plot(K[1,:], K[0,:], '*', color='yellow')   #second component
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+
+
+# Output result to screen
+plt.show()
