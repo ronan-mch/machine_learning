@@ -4,17 +4,18 @@ import matplotlib.pyplot as plt
 import scipy.linalg as linalg
 import math
 from pylab import *
+from similarity import similarity
 
 with open('titanic_processed.csv') as f:
    data_frame = pandas.read_csv(f)
    
-   # Replace empty values in the age column with the mean of that column
+  # # Replace empty values in the age column with the mean of that column
   # for i in range(len(data_frame)):
   #     if math.isnan(data_frame.iloc[i,7]):
   #         data_frame.iloc[i,7] = data_frame.iloc[:,7].mean()
 
-   # Center the values by subtracting the mean and dividing by the standard
-   # deviation
+  # # Center the values by subtracting the mean and dividing by the standard
+  # # deviation
    centered = (data_frame
         .fillna(data_frame.mean()) # replace empty values with mean
         .assign(survived_cent = lambda x: ((x.Survived - x.Survived.mean()) /
@@ -49,27 +50,52 @@ with open('titanic_processed.csv') as f:
         )
 centeredMatrix = np.mat(centered)
 
-
-# PCA by computing SVD of Y
+# # PCA by computing SVD of Y
 U,S,V = linalg.svd(centeredMatrix,full_matrices=False)
 V = np.mat(V).T
 
-# Project the centered data onto principal component space
+# # Project the centered data onto principal component space
 K = centeredMatrix * V
 #print np.size(K,0)
 #print np.size(K,1)
 
-# Compute variance explained by principal components
+# # Compute variance explained by principal components
 var = (S*S) / (S*S).sum() 
 print sum(var[:2]),"The amount of variation explained as a function of two PCA"
-# 
+
+# # This matrix is used to check the correlation
+KTranspose = np.mat(K).T
+
+# # Checking for correlation
+correlationMat= np.mat(similarity(KTranspose,KTranspose,'cor'))
+#print np.size(correlationMat,0)
+#print np.size(correlationMat,1)
+for i in range(len(correlationMat)):
+    for j in range(len(correlationMat)):
+        if  i != j :
+            if  round (correlationMat[i,j]) == -1 or round (correlationMat[i,j]) == 1 :
+                print 'correlation between',i,'and',j
+
+# # Plot the first Direction
+f = plt.figure(1)
+plt.title('Direction of First Component ')
+plt.plot([np.arange(13)],V[0,:], 'o', color = 'black')
+plt.xlabel('Attributes')
+plt.ylabel('Direction')
+f.show()
+
+# # Plot the second Direction
+g = plt.figure(2)
+plt.title('Direction of Second Component ')
+plt.plot([np.arange(13)],V[1,:], 'o', color = 'green')
+plt.xlabel('Attributes')
+plt.ylabel('Direction')
+g.show()
+
 # # Plot PCA of the data
-# 
-# plt.title('PCA')
-# plt.plot(K[:,0], K[:,1], '.', color='red')    #first component
-# #plt.plot(K[1,:], K[0,:], '*', color='yellow')   #second component
-# plt.xlabel('PCA1')
-# plt.ylabel('PCA2')
-# 
-# # Output result to screen
-# plt.show()
+pca = plt.figure(3) 
+plt.title('PCA')
+plt.plot(K[:,0], K[:,1], '.', color='red')       #first component
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+pca.show()
