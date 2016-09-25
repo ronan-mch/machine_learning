@@ -81,7 +81,7 @@ f = plt.figure(1)
 plt.title('Direction of First Component ')
 plt.plot([np.arange(13)],V[0,:], 'o', color = 'black')
 plt.xlabel('Attributes')
-plt.ylabel('Direction')
+plt.ylabel('Weights')
 f.show()
 
 # # Plot the second Direction
@@ -89,7 +89,7 @@ g = plt.figure(2)
 plt.title('Direction of Second Component ')
 plt.plot([np.arange(13)],V[1,:], 'o', color = 'green')
 plt.xlabel('Attributes')
-plt.ylabel('Direction')
+plt.ylabel('Weights')
 g.show()
 
 # # Plot PCA of the data
