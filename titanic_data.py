@@ -11,8 +11,26 @@ def processed():
        return processed.drop(processed.columns[0], 1)
 
 def engineered():
-    data = original()
-    titles = data.Name.str.extract('(Mr|Mrs|Miss|Master|Don|Captain|Col|Rev|Ms|Mme|Dr|Major|Countess|Capt|Mlle|Jonkheer)', expand=False)
-    titles.name = 'Title'
-    return data.join(titles)
+    f = open('titanic_train.csv')
+    data = pandas.read_csv(f, dtype={'Fare': str})
+    with_titles = add_titles(data)
+    with_fam_size = with_titles.assign(FamilySize = lambda row: row.Parch + row.SibSp)
+    with_cleaned_fare = add_cleaned_fare(with_fam_size)
+    return with_cleaned_fare
 
+def add_titles(input_data): 
+    titles = input_data.Name.str.extract('(Mr|Mrs|Miss|Master|Don|Captain|Col|Rev|Ms|Mme|Dr|Major|Countess|Capt|Mlle|Jonkheer)', expand=False)
+    titles.name = 'Title'
+    return input_data.join(titles)
+
+def add_cleaned_fare(input_data):
+    cleaned_fare = input_data.Fare.apply(add_dot).astype('float64')
+    cleaned_fare.name = 'CleanedFare'
+    return input_data.join(cleaned_fare)
+
+# insert a dot into strings without decimals 
+def add_dot(string):
+    if "." in string: return string
+    if string == "0": return string
+    if int(string) <= 999: return string
+    return string[:-3] + "." + string[-3:]
