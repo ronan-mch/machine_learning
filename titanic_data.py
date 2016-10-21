@@ -12,11 +12,17 @@ def processed():
 
 def engineered():
     f = open('titanic_train.csv')
-    data = pandas.read_csv(f, dtype={'Fare': str})
+    data = pandas.read_csv(f, dtype={'Embarked': 'category','Fare': str})
     with_titles = add_titles(data)
     with_fam_size = with_titles.assign(FamilySize = lambda row: row.Parch + row.SibSp)
     with_cleaned_fare = add_cleaned_fare(with_fam_size)
     return with_cleaned_fare
+
+def linear():
+    d = engineered() 
+    pruned = d.drop(['PassengerId', 'Name', 'Ticket', 'Fare', 'Cabin'], axis=1)
+    encoded = pandas.get_dummies(pruned)
+    return encoded
 
 def add_titles(input_data): 
     titles = input_data.Name.str.extract('(Mr|Mrs|Miss|Master|Don|Captain|Col|Rev|Ms|Mme|Dr|Major|Countess|Capt|Mlle|Jonkheer)', expand=False)
