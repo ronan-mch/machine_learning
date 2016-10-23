@@ -24,7 +24,7 @@ def linear():
     d = engineered() 
     pruned = d.drop(['PassengerId', 'Name', 'Ticket', 'Fare', 'Cabin'], axis=1)
     binarized = pruned.replace(to_replace={'Sex': {'male': 0, 'female': 1}})
-    encoded = pandas.get_dummies(binarized)
+    encoded = pandas.get_dummies(binarized, prefix={'Embarked': 'Emb', 'Title': 'Tit'})
     return encoded
 
 def add_titles(input_data): 
