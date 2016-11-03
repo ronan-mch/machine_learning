@@ -21,13 +21,13 @@ def engineered():
     return filled_ages
 
 def linear():
-    d = engineered() 
-    pruned = d.drop(['PassengerId', 'Name', 'Ticket', 'Fare', 'Cabin'], axis=1)
+    d = engineered()
+    pruned = d.drop(['PassengerId', 'Name', 'Ticket', 'Fare', 'Cabin', 'SibSp', 'Parch'], axis=1)
     binarized = pruned.replace(to_replace={'Sex': {'male': 0, 'female': 1}})
     encoded = pandas.get_dummies(binarized, prefix={'Embarked': 'Emb', 'Title': 'Tit'})
     return encoded
 
-def add_titles(input_data): 
+def add_titles(input_data):
     titles = input_data.Name.str.extract('(Mr|Mrs|Miss|Master|Don|Captain|Col|Rev|Ms|Mme|Dr|Major|Countess|Capt|Mlle|Jonkheer)', expand=False)
     titles.name = 'Title'
     return input_data.join(titles)
