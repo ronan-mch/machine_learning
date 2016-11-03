@@ -24,12 +24,12 @@ def main():
     fwd.table_display(k_labels, k_error_rates)
     k_gen_est_errors = fwd.estimate_generalisation_errors(k_scorechart, data, gen_est_data, fwd.score_regr)
 
-    f, axarr = plot.subplots(1, 2, sharey=True)
-    fwd.plot_scores(axarr[0], ho_error_rates[1:], "Holdout method", "Train")
-    fwd.plot_scores(axarr[0], ho_gen_est_errors[1:], "Holdout method", "Test")
+    f, axarr = plot.subplots(1, 2)
+    fwd.plot_scores(axarr[0], ho_error_rates, "Holdout method", "Train")
+    fwd.plot_scores(axarr[0], ho_gen_est_errors, "Holdout method", "Test")
 
-    fwd.plot_scores(axarr[1], k_error_rates[1:], "K-Fold method", "Train")
-    fwd.plot_scores(axarr[1], k_gen_est_errors[1:], "K-Fold method", "Test")
+    fwd.plot_scores(axarr[1], k_error_rates, "K-Fold method", "Train")
+    fwd.plot_scores(axarr[1], k_gen_est_errors, "K-Fold method", "Test")
 
     f.text(0.5, 0.04, 'Model index', ha='center', va='center')
     f.text(0.06, 0.5, 'Generalisation error', ha='center', va='center', rotation='vertical')
